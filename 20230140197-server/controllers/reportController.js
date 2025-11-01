@@ -1,40 +1,41 @@
-// 1. Ganti sumber data dari array ke model Sequelize
 const { Presensi } = require("../models");
-const { format } = require("date-fns-tz");
-const timeZone = "Asia/Jakarta";
+const { Op } = require("sequelize");
 
-exports.getDailyReport = async (req, res) => { // 2. Tambahkan async
-  console.log("Controller: Mengambil data laporan harian dari database...");
-
-  // 3. Gunakan try...catch untuk error handling
+exports.getDailyReport = async (req, res) => {
   try {
-    // 4. Ganti cara mengambil data menggunakan 'findAll' dari Sequelize
-    //    Kita urutkan berdasarkan checkIn terbaru (DESC)
-    const allRecords = await Presensi.findAll({
-      order: [["checkIn", "DESC"]],
-    });
+    const { nama, tanggal, tanggalMulai, tanggalSelesai } = req.query;
+    let options = { where: {} };
 
-    // 5. (Opsional tapi disarankan) Format data agar konsisten
-    const formattedData = allRecords.map((record) => ({
-      userId: record.userId,
-      nama: record.nama,
-      checkIn: record.checkIn
-        ? format(record.checkIn, "yyyy-MM-dd HH:mm:ssXXX", { timeZone })
-        : null,
-      checkOut: record.checkOut
-        ? format(record.checkOut, "yyyy-MM-dd HH:mm:ssXXX", { timeZone })
-        : null,
-    }));
+    // Filter berdasarkan nama
+    if (nama) {
+      options.where.nama = { [Op.like]: `%${nama}%` };
+    }
+
+    // Filter berdasarkan tanggal tertentu
+    if (tanggal) {
+      options.where.checkIn = {
+        [Op.between]: [`${tanggal} 00:00:00`, `${tanggal} 23:59:59`],
+      };
+    }
+
+    // Filter berdasarkan rentang tanggal
+    if (tanggalMulai && tanggalSelesai) {
+      options.where.checkIn = {
+        [Op.between]: [`${tanggalMulai} 00:00:00`, `${tanggalSelesai} 23:59:59`],
+      };
+    }
+
+    const records = await Presensi.findAll(options);
 
     res.json({
-      reportDate: format(new Date(), "yyyy-MM-dd", { timeZone }), // Format tanggal laporan
-      data: formattedData, // Kirim data yang sudah diformat
+      reportDate: new Date().toLocaleDateString(),
+      data: records,
     });
-    
   } catch (error) {
-    // 6. Tambahkan error handling
-    res
-      .status(500)
-      .json({ message: "Terjadi kesalahan pada server", error: error.message });
+    console.error(error);
+    res.status(500).json({
+      message: "Gagal mengambil laporan presensi",
+      error: error.message,
+    });
   }
 };
