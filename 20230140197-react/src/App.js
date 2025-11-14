@@ -1,21 +1,44 @@
- 	import React, { useEffect, useState } from 'react';
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
+import LoginPage from './components/LoginPage';
+import RegisterPage from './components/RegisterPage';
+import DashboardPage from './components/DashboardPage';
 
 function App() {
-  const [message, setMessage] = useState('');
+  const location = useLocation();
 
-  useEffect(() => {
-    fetch('http://localhost:5000') // ip nya
-      .then(response => response.json())
-      .then(data => setMessage(data.message))
-      .catch(error => console.error('Error:', error));
-  }, []);
+  // Sembunyikan navbar pada login, register, home, dan dashboard
+  const hideNavbar =
+    location.pathname === "/login" ||
+    location.pathname === "/register" ||
+    location.pathname === "/" ||
+    location.pathname === "/dashboard";
 
   return (
-    <div>
-      <h1>Integrasi React dan Node.js</h1>
-      <p>Pesan dari server: {message}</p>
-    </div>
+    <>
+      {!hideNavbar && (
+        <nav className="p-4 bg-gray-100">
+          <Link to="/login" className="mr-4">Login</Link>
+          <Link to="/register">Register</Link>
+        </nav>
+      )}
+
+      <Routes>
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/register" element={<RegisterPage />} />
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/" element={<LoginPage />} />
+      </Routes>
+    </>
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
+
+export default AppWrapper;
