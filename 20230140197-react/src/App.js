@@ -1,44 +1,38 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link, useLocation } from 'react-router-dom';
-import LoginPage from './components/LoginPage';
-import RegisterPage from './components/RegisterPage';
-import DashboardPage from './components/DashboardPage';
+import React from "react";
+import { Routes, Route, useLocation } from "react-router-dom";
+
+import Navbar from "./components/Navbar";
+import LoginPage from "./components/LoginPage";
+import DashboardPage from "./components/DashboardPage";
+import PresensiPage from "./components/PresensiPage";
+import RegisterPage from "./components/RegisterPage";
+import ReportPage from "./components/ReportPage";
 
 function App() {
   const location = useLocation();
 
-  // Sembunyikan navbar pada login, register, home, dan dashboard
+  // Hide navbar on login & register
   const hideNavbar =
-    location.pathname === "/login" ||
-    location.pathname === "/register" ||
     location.pathname === "/" ||
-    location.pathname === "/dashboard";
+    location.pathname === "/login" ||
+    location.pathname === "/register";
 
   return (
-    <>
-      {!hideNavbar && (
-        <nav className="p-4 bg-gray-100">
-          <Link to="/login" className="mr-4">Login</Link>
-          <Link to="/register">Register</Link>
-        </nav>
-      )}
+    <div>
+      {!hideNavbar && <Navbar />}
 
       <Routes>
+        <Route path="/" element={<LoginPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
+
+        {/* Protected Pages */}
         <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/" element={<LoginPage />} />
+        <Route path="/presensi" element={<PresensiPage />} />
+        <Route path="/reports" element={<ReportPage />} />
       </Routes>
-    </>
+    </div>
   );
 }
 
-function AppWrapper() {
-  return (
-    <Router>
-      <App />
-    </Router>
-  );
-}
-
-export default AppWrapper;
+export default App;

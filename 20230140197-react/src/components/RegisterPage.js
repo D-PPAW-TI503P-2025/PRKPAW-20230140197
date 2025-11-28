@@ -35,7 +35,6 @@ function RegisterPage() {
   return (
     <div className="min-h-screen bg-blue-100 flex flex-col items-center justify-center">
 
-      {/* Card Form */}
       <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
         <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
           Register
@@ -111,7 +110,6 @@ function RegisterPage() {
         )}
       </div>
 
-      {/* === Kembali ke Login (DI LUAR CARD) === */}
       <div className="text-center mt-4">
         <Link to="/login" className="text-blue-600 hover:underline font-medium">
           Kembali ke Login

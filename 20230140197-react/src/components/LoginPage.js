@@ -30,14 +30,7 @@ function LoginPage() {
 
   return (
     <div className="min-h-screen bg-blue-100 flex flex-col">
-
-      {/* === NAVBAR TOP RIGHT === */}
-      <div className="w-full flex justify-end p-4 text-gray-700 font-semibold space-x-6">
-        <Link to="/login" className="hover:underline">Login</Link>
-        <Link to="/register" className="hover:underline">Register</Link>
-      </div>
-
-      {/* === FORM LOGIN === */}
+      
       <div className="flex flex-col items-center justify-center flex-1">
         <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
           <h2 className="text-3xl font-bold text-center mb-6 text-gray-800">
@@ -80,6 +73,16 @@ function LoginPage() {
               Login
             </button>
           </form>
+                <p className="text-center mt-4 text-sm text-gray-600">
+        Belum punya akun?{" "}
+        <a
+          href="/register"
+          className="text-blue-600 font-semibold hover:underline"
+        >
+          Register
+        </a>
+      </p>
+
 
           {error && (
             <p className="text-red-600 text-sm mt-4 text-center">{error}</p>
