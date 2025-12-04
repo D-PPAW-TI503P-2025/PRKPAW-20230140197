@@ -7,6 +7,7 @@ function ReportPage() {
   const [error, setError] = useState(null);
   const navigate = useNavigate();
   const [searchTerm, setSearchTerm] = useState("");
+  const [selectedImage, setSelectedImage] = useState(null);
 
   const fetchReports = async (query) => {
     const token = localStorage.getItem("token");
@@ -39,6 +40,7 @@ function ReportPage() {
   useEffect(() => {
     fetchReports("");
   }, [navigate]);
+
   const handleSearchSubmit = (e) => {
     e.preventDefault();
     fetchReports(searchTerm);
@@ -50,6 +52,7 @@ function ReportPage() {
         Laporan Presensi Harian
       </h1>
 
+      {/* Search */}
       <form onSubmit={handleSearchSubmit} className="mb-6 flex space-x-2">
         <input
           type="text"
@@ -90,39 +93,75 @@ function ReportPage() {
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                   Longitude
                 </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Bukti Foto
+                </th>
               </tr>
             </thead>
+
             <tbody className="bg-white divide-y divide-gray-200">
               {reports.length > 0 ? (
-                reports.map((presensi) => (
-                  <tr key={presensi.id}>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      {presensi.user ? presensi.user.nama : "N/A"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {new Date(presensi.checkIn).toLocaleString("id-ID", {
-                        timeZone: "Asia/Jakarta",
-                      })}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {presensi.checkOut
-                        ? new Date(presensi.checkOut).toLocaleString("id-ID", {
-                            timeZone: "Asia/Jakarta",
-                          })
-                        : "Belum Check-Out"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {presensi.latitude || "N/A"}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                      {presensi.longitude || "N/A"}
-                    </td>
-                  </tr>
-                ))
+                reports.map((presensi) => {
+                  // --- FIX BACKSLASH PATH ---
+                  const fixedPath = presensi.buktiFoto
+                    ? presensi.buktiFoto.replace(/\\/g, "/")
+                    : null;
+
+                  return (
+                    <tr key={presensi.id}>
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                        {presensi.user ? presensi.user.nama : "N/A"}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {new Date(presensi.checkIn).toLocaleString("id-ID", {
+                          timeZone: "Asia/Jakarta",
+                        })}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {presensi.checkOut
+                          ? new Date(presensi.checkOut).toLocaleString(
+                              "id-ID",
+                              {
+                                timeZone: "Asia/Jakarta",
+                              }
+                            )
+                          : "Belum Check-Out"}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {presensi.latitude || "N/A"}
+                      </td>
+
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {presensi.longitude || "N/A"}
+                      </td>
+
+                      {/* Bukti Foto */}
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                        {fixedPath ? (
+                          <img
+                            src={`http://localhost:5000/${fixedPath}`}
+                            alt="Bukti Foto"
+                            className="w-12 h-12 rounded object-cover border cursor-pointer"
+                            onClick={() =>
+                              setSelectedImage(
+                                `http://localhost:5000/${fixedPath}`
+                              )
+                            }
+                          />
+                        ) : (
+                          "Tidak ada foto"
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })
               ) : (
                 <tr>
                   <td
-                    colSpan="3"
+                    colSpan="6"
                     className="px-6 py-4 text-center text-gray-500"
                   >
                     Tidak ada data yang ditemukan.
@@ -131,6 +170,20 @@ function ReportPage() {
               )}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* Modal Foto */}
+      {selectedImage && (
+        <div
+          className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50"
+          onClick={() => setSelectedImage(null)}
+        >
+          <img
+            src={selectedImage}
+            alt="Foto Presensi"
+            className="max-w-full max-h-full rounded-lg shadow-lg"
+          />
         </div>
       )}
     </div>

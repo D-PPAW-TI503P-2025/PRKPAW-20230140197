@@ -25,13 +25,17 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true
     },
     latitude: {
-        type: DataTypes.DECIMAL(10, 7),
-        allowNull: false,
-      },
-      longitude: {
-        type: DataTypes.DECIMAL(10, 7),
-        allowNull: false,
-      },
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: false,
+    },
+    longitude: {
+      type: DataTypes.DECIMAL(10, 7),
+      allowNull: false,
+    },
+    buktiFoto: {
+      type: DataTypes.STRING,
+      allowNull: true
+      }
   }, {
     sequelize,
     modelName: 'Presensi',
