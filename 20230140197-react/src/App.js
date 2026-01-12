@@ -1,38 +1,66 @@
 import React from "react";
-import { Routes, Route, useLocation } from "react-router-dom";
-
-import Navbar from "./components/Navbar";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
-import DashboardPage from "./components/DashboardPage";
-import PresensiPage from "./components/PresensiPage";
 import RegisterPage from "./components/RegisterPage";
+import DashboardPage from "./components/DashboardPage";
+import AttendancePage from "./components/Presensipage";
 import ReportPage from "./components/ReportPage";
+import Navbar from "./components/Navbar";
+import SensorPage from './components/SensorPage';
+import "leaflet/dist/leaflet.css";
 
-function App() {
-  const location = useLocation();
-
-  // Hide navbar on login & register
-  const hideNavbar =
-    location.pathname === "/" ||
-    location.pathname === "/login" ||
-    location.pathname === "/register";
-
+const MainLayout = ({ children }) => {
   return (
     <div>
-      {!hideNavbar && <Navbar />}
-
-      <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-
-        {/* Protected Pages */}
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/presensi" element={<PresensiPage />} />
-        <Route path="/reports" element={<ReportPage />} />
-      </Routes>
+      <Navbar />
+      <main>{children}</main>
     </div>
   );
-}
+};
 
+function App() {
+  return (
+    <Router>
+      <div>
+        <Routes>
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/register" element={<RegisterPage />} />
+          <Route
+            path="/dashboard"
+            element={
+              <MainLayout>
+                <DashboardPage />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/monitoring"
+            element={
+              <MainLayout>
+                <SensorPage />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/presensi"
+            element={
+              <MainLayout>
+                <AttendancePage />
+              </MainLayout>
+            }
+          />
+          <Route
+            path="/reports"
+            element={
+              <MainLayout>
+                <ReportPage />
+              </MainLayout>
+            }
+          />
+          <Route path="/" element={<LoginPage />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+}
 export default App;

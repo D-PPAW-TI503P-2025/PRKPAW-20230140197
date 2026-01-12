@@ -69,7 +69,7 @@ function Navbar() {
             >
               Presensi
             </Link>
-
+            <Link to="/monitoring" className="...">Monitoring Suhu</Link>
             {user.role === "admin" && (
               <Link
                 to="/reports"
